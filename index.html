@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Finder</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+
+  <h1 class="mb-4">Recipe Finder</h1>
+
+  <div class="input-group mb-3">
+
+    <input type="text" id="searchInput" class="form-control" placeholder="Enter ingredient">
+
+    <div class="input-group-append">
+      
+      <button class="btn btn-primary" type="button" onclick="searchRecipe()">Search</button>
+    </div>
+  </div>
+  <div id="recipeList"></div>
+</div>
+
+<script>
+
+  function searchRecipe() {
+    var ingredient = document.getElementById("searchInput").value;
+    if (ingredient === '') {
+      alert("Please enter an ingredient");
+      return;
+    }
+    var appId = '54b53cd4'; // Edamam App ID
+    var appKey = '674350baa5512b4bd4b173c6e762c0d5'; // Edamam App Key
+    var apiEndpoint = `https://api.edamam.com/search?q=${ingredient}&app_id=${appId}&app_key=${appKey}`;
+    
+    fetch(apiEndpoint)
+      .then(response => response.json())
+      .then(data => {
+        displayRecipes(data.hits);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }
+
+  function displayRecipes(recipes) {
+    var recipeList = document.getElementById("recipeList");
+    recipeList.innerHTML = '';
+    recipes.forEach(recipe => {
+      var recipeDiv = document.createElement("div");
+      recipeDiv.className = "card mb-3";
+      recipeDiv.innerHTML = `
+        <div class="card-body">
+          <h5 class="card-title">${recipe.recipe.label}</h5>
+          <p class="card-text">${recipe.recipe.source}</p>
+          <a href="${recipe.recipe.url}" class="btn btn-primary">View Recipe</a>
+        </div>`;
+      recipeList.appendChild(recipeDiv);
+    });
+  }
+
+</script>
+
+</body>
+</html>
